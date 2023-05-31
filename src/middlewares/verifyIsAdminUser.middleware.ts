@@ -5,7 +5,7 @@ import { AppError } from "../errors";
 
 async function verifyIsAdminUserMiddleware(req:Request, response:Response, next:NextFunction): Promise<Response | void>{
 
-    if(!req.user.admin){
+    if(req.user.admin === false){
         throw new AppError("Insufficient permission", 403);
     }
     

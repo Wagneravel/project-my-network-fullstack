@@ -1,7 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, BeforeInsert, BeforeUpdate } from "typeorm";
-import { Contact } from "./contacts.entity";
-import { Email } from "./email.entity";
-import { Phone } from "./phone.entity";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, BeforeInsert, BeforeUpdate, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 import { getRounds, hashSync } from 'bcryptjs';
 
 @Entity('users')
@@ -9,11 +6,17 @@ export class User {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @Column({length: 100})
+    @Column({length: 120})
     fullName: string;
 
-    @Column({length:120})
+    @Column({length:60, unique:true})
     password: string;
+
+    @Column({length:120})
+    phone: string;
+
+    @Column({length:120})
+    email: string;
 
     @BeforeInsert()
     @BeforeUpdate()
@@ -27,19 +30,13 @@ export class User {
     @Column({ default: false })
     admin: boolean;
 
-    @OneToMany(() => Email, email => email.user, { cascade: true })
-    @JoinColumn()
-    emails: Email[];
+    @CreateDateColumn({type:"date"})
+    createdAt: string;
   
-    @OneToMany(() => Phone, phone => phone.user, { cascade: true })
-    @JoinColumn()
-    phones: Phone[];
-
-    @Column({ default: () => "CURRENT_TIMESTAMP" })
-    registrationDate: Date;
-
-    @OneToMany(() => Contact, contact => contact.user, { cascade: true })
-    @JoinColumn()
-    contacts: Contact[];
+    @UpdateDateColumn({type:"date"})
+    updatedAt: string;
+  
+    @DeleteDateColumn({ nullable: true , type:"date"})
+    deletedAt: string;
 }
 

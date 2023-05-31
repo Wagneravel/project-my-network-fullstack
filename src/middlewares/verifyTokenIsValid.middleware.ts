@@ -17,7 +17,7 @@ async function verifyTokenIsValidMiddleware(request: Request,  response: Respons
 
   token = token?.split(" ")[1]
 
-  jwt.verify(token, process.env.SECRET_KEY!, (error: any, decoded: any) => {
+  jwt.verify(token, process.env.SECRET_KEY!, (error, decoded: any) => {
 
   if (error) {
     throw new AppError(error.message, 401);

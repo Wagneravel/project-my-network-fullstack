@@ -1,7 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from "typeorm";
 import { User } from "./users.entity";
-import { Email } from "./email.entity";
-import { Phone } from "./phone.entity";
 
 @Entity('contacts')
 export class Contact {
@@ -11,17 +9,16 @@ export class Contact {
     @Column({length: 100})
     fullName: string;
 
-    @OneToMany(() => Email, email => email.contact, { cascade: true })
-    @JoinColumn()
-    emails: Email[];
-  
-    @OneToMany(() => Phone, phone => phone.contact, { cascade: true })
-    @JoinColumn()
-    phones: Phone[];
+    @Column({length:120})
+    phone: string;
+
+    @Column({length:120})
+    email: string;
 
     @Column({ default: () => "CURRENT_TIMESTAMP" })
     registrationDate: Date;
 
-    @ManyToOne(() => User, user => user.contacts)
+    @ManyToOne(() => User )
     user: User;
 }
+// yarn typeorm migration:create -n createContatos -p src/migrations

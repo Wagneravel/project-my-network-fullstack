@@ -1,18 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import { Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
-import { Email } from "../entities";
+import { User } from "../entities";
 import { AppError } from "../errors";
 
 export const checkIfEmailUserExistsMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
-    const emailRepository: Repository<Email> = AppDataSource.getRepository(Email)
+    const userRepository: Repository<User> = AppDataSource.getRepository(User)
   
     if(!req.body.email && req.method == "PATCH"){
         return  next();
     }
   
-    const emailUser = await emailRepository.findOne({
+    const emailUser = await userRepository.findOne({
         where: {
             email: req.body.email
         }
