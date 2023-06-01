@@ -1,7 +1,7 @@
 import { User } from "./users.entity";
-// import { Contact } from "./contacts.entity";
+import { Contact } from "./contacts.entity";
 
 export {
     User,
-    // Contact,
+    Contact,
 }

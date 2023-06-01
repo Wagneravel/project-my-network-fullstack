@@ -1,37 +1,61 @@
-// import { Repository } from "typeorm";
-// import { AppDataSource } from "../../data-source";
-// import { Contact } from "../../entities";
-// import { IContactReq, IContactReturn } from "../../interfaces/contact.interface";
-// import { contactResponseSchema } from "../../schemas/contact.schema";
+import { Repository } from "typeorm";
+import { AppDataSource } from "../../data-source";
+import { Contact, User } from "../../entities";
+import { IContactReq, IContactReturn, IMultipleContactsReturn } from "../../interfaces/contact.interface";
+import { contactResponseSchema, returnMultipleContactsSchema } from "../../schemas/contact.schema";
+import { AppError } from "../../errors";
 
-// export const createContactService = async (userId: number, contactData: IContactReq): Promise<IContactReturn> => {
-//   const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
 
-//   const contact: Contact = contactRepository.create({
-//     userId,
-//     ...contactData,
-//   });
+export const createContactService = async (userId: number, contactData: IContactReq): Promise<IContactReturn> => {
 
-//   await contactRepository.save(contact);
+    const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
+    const userRepository: Repository<User> = AppDataSource.getRepository(User);
 
-//   const newContact = contactResponseSchema.parse(contact);
+    const user: User | null = await userRepository.findOne({ where: { id: userId } });
+  
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+  
+    const contact: Contact = contactRepository.create({
+      user,
+      ...contactData,
+    });
+  
+    
+    await contactRepository.save(contact);
 
-//   return newContact;
-// };
+    const newContact = contactResponseSchema.parse(contact);
 
-// export const getContactByIdService = async (contactId: number): Promise<IContactReturn | null> => {
-//   const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
+    return newContact;
+};
 
-//   const contact: Contact | null = await contactRepository.findOne(contactId);
+export const listContactsService = async (): Promise<IMultipleContactsReturn> => {
 
-//   if (!contact) {
-//     return null;
-//   }
+    const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
+    const contacts: Contact[] = await contactRepository.find();
+  
+    
+    return returnMultipleContactsSchema.parse(contacts)
+  }
 
-//   const contactData = contactResponseSchema.parse(contact);
+export const getContactByIdService = async (contactId: number): Promise<IContactReturn | null> => {
+  const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
 
-//   return contactData;
-// };
+  const contact: Contact | null = await contactRepository.findOne({
+    where: {
+        id: contactId,
+    }    
+  });
+
+  if (!contact) {
+    return null;
+  }
+
+  const contactData = contactResponseSchema.parse(contact);
+
+  return contactData;
+};
 
 // export const updateContactService = async (
 //   contactId: number,

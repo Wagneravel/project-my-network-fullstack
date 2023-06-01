@@ -1,19 +1,19 @@
-// import * as z from 'zod';
+import * as z from 'zod';
+import { userReqSchema } from "../schemas/users.schema";
 
-// export const contactReqSchema = z.object({
-//   name: z.string().min(3).max(45),
-//   email: z.string().email().max(45),
-//   phone: z.string().max(20),
-//   createdAt: z.string(),
-// });
+export const contactReqSchema = z.object({
+  fullName: z.string().min(3).max(100),
+  email: z.string().email().max(100),
+  phone: z.string().max(20),
+});
 
-// export const returnContactSchema = contactReqSchema.extend({
-//   id: z.number(),
-//   userId: z.number(),
-//   updatedAt: z.string(),
-//   deletedAt: z.string().nullable(),
-// });
+export const returnContactSchema = contactReqSchema.extend({
+  id: z.number(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  deletedAt: z.string().nullable()
+});
 
-// export const contactResponseSchema = returnContactSchema;
+export const contactResponseSchema = returnContactSchema;
 
-// export const returnMultipleContactsSchema = contactResponseSchema.array();
+export const returnMultipleContactsSchema = contactResponseSchema.array();

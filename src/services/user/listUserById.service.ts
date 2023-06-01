@@ -2,21 +2,21 @@ import { Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entities";
 import { AppError } from "../../errors";
+import { IUserReq, IUserReturn } from "../../interfaces/user.interfaces"
 
-export async function getUserByIdService(
-    userId: string
-): Promise<User> {
-  const userRepository: Repository<User> =
-    AppDataSource.getRepository(User);
+export async function getUserByIdService(userId: string): Promise<IUserReq> {
+  
+  const userRepository: Repository<User> = AppDataSource.getRepository(User);
+
   const user = await userRepository.findOne({
     where: {
       id: Number(userId)
     },
-    // relations: {
-    //   contacts: {
-    //     user: true
-    //   }
-    // }
+    relations: {
+      contacts: {
+        user: true
+      }
+    }
   });
 
   if (!user) {

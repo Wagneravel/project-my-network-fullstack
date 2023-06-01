@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 import { User } from "./users.entity";
 
 @Entity('contacts')
@@ -9,16 +9,21 @@ export class Contact {
     @Column({length: 100})
     fullName: string;
 
-    @Column({length:120})
+    @Column({length:20})
     phone: string;
 
-    @Column({length:120})
+    @Column({length:100})
     email: string;
 
-    @Column({ default: () => "CURRENT_TIMESTAMP" })
-    registrationDate: Date;
+    @CreateDateColumn({type:"date"})
+    createdAt: string;
+  
+    @UpdateDateColumn({type:"date"})
+    updatedAt: string;
+  
+    @DeleteDateColumn({ nullable: true , type:"date"})
+    deletedAt: string;
 
-    @ManyToOne(() => User )
+    @ManyToOne(() => User, (user)=> user.contacts )
     user: User;
 }
-// yarn typeorm migration:create -n createContatos -p src/migrations

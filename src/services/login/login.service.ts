@@ -5,12 +5,25 @@ import { Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entities";
 import { AppError } from "../../errors";
-import { iLogin } from "../../interfaces/login.interface";
+import { iLogin, iReturnToken} from "../../interfaces/login.interface";
 
+interface ILoginResponse {
+  token: string;
+  user: {
+    email: string;
+    id: number;
+    fullName: string;
+    phone: string;
+    admin: boolean;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+  };
+}
 
 require('dotenv').config();
 
-export async function createLoginService(loginData: iLogin): Promise<string> {
+export async function createLoginService(loginData: iLogin): Promise<ILoginResponse> {
   
   const userRepository: Repository<User> = AppDataSource.getRepository(User)  
 
@@ -27,10 +40,24 @@ export async function createLoginService(loginData: iLogin): Promise<string> {
   }
 
   const token = jwt.sign(
-    { admin: user.admin },
+    { user },
     String(process.env.SECRET_KEY),
     { expiresIn: process.env.EXPIRES_IN!, subject: String(user.id) }
   );
 
-  return token;
+  const loginResponse: ILoginResponse = {
+    token,
+    user: {
+      email: user.email,
+      id: user.id,
+      fullName: user.fullName,
+      phone: user.phone,
+      admin: user.admin,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      deletedAt: user.deletedAt,
+    },
+  };
+
+  return loginResponse;
 }

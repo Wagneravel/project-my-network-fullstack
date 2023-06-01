@@ -1,35 +1,54 @@
-// import { Request, Response } from "express";
-// import {
-//   createContactService,
-//   getContactByIdService,
+import { Request, Response } from "express";
+import {
+  createContactService,
+  getContactByIdService,
+  listContactsService
 //   updateContactService,
 //   deleteContactService,
-// } from "../services/contact/contact.service"
-// import { IContactReq } from "../interfaces/contact.interface";
+} from "../services/contact/contact.service"
+import { IContactReq } from "../interfaces/contact.interface";
+import jwt from "jsonwebtoken";
+import { AppError } from "../errors";
 
-// export const createContactController = async (req: Request, res: Response) => {
-
-//   const { userId } = req.params;
-//   const contactData: IContactReq = req.body;
-
-//   const newContact = await createContactService(Number(userId), contactData);
-
-//   return res.status(201).json(newContact);
+export const createContactController = async (req: Request, res: Response) => {
+    const token = req.headers.authorization?.split(' ')[1];
   
-// };
+    if (!token) {
+      throw new AppError('Missing bearer token', 401);
+    }
+  
+    const decodedToken: any = jwt.verify(token, process.env.SECRET_KEY!);
+    
+    const userId = decodedToken.id;
+    
+    const contactData: IContactReq = req.body;
+    const newContact = await createContactService(userId, contactData);
 
-// export const getContactByIdController = async (req: Request, res: Response) => {
+    return res.status(201).json(newContact);
+    
+};
 
-//   const { contactId } = req.params;
+export async function allContactsListController(request:Request, response: Response): Promise<Response>{
 
-//   const contact = await getContactByIdService(Number(contactId));
+    const allList = await listContactsService()
 
-//   if (!contact) {
-//     return res.status(404).json({ error: "Contact not found" });
-//   }
+    return response.status(200).json(allList)
+    
+}
 
-//   return res.status(200).json(contact);
-// };
+
+export const getContactByIdController = async (req: Request, res: Response) => {
+
+  const contactId = req.params.id;
+
+  const contact = await getContactByIdService(Number(contactId));
+
+  if (!contact) {
+    return res.status(404).json({ error: "Contact not found" });
+  }
+
+  return res.status(200).json(contact);
+};
 
 // export const updateContactController = async (req: Request, res: Response) => {
 

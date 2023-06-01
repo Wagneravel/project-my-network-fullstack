@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, BeforeInsert, BeforeUpdate, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 import { getRounds, hashSync } from 'bcryptjs';
-
+import { Contact } from "../entities/contacts.entity";
+import { Exclude } from "class-transformer";
 @Entity('users')
 export class User {
     @PrimaryGeneratedColumn('increment')
@@ -9,6 +10,7 @@ export class User {
     @Column({length: 120})
     fullName: string;
 
+    @Exclude()
     @Column({length:60, unique:true})
     password: string;
 
@@ -38,5 +40,8 @@ export class User {
   
     @DeleteDateColumn({ nullable: true , type:"date"})
     deletedAt: string;
+
+    @OneToMany(() => Contact, (contact)=> contact.user)
+    contacts: Contact[];
 }
 
