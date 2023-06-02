@@ -21,7 +21,7 @@ export const userResponseSchema = returnUserSchema
     password: true
   });
 
-export const returnMultipleUsersSchema = userResponseSchema.array();
+export const returnMultipleUsersSchema = z.array(userResponseSchema) 
 
 export const userUpdateSchema = userReqSchema
   .pick({ fullName: true, email: true, password: true, phone: true })

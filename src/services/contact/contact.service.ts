@@ -30,14 +30,21 @@ export const createContactService = async (userId: number, contactData: IContact
     return newContact;
 };
 
+
+
+
 export const listContactsService = async (): Promise<IMultipleContactsReturn> => {
 
     const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
-    const contacts: Contact[] = await contactRepository.find();
+    const contacts: Contact[] | null = await contactRepository.find();
   
     
     return returnMultipleContactsSchema.parse(contacts)
-  }
+}
+
+
+
+
 
 export const getContactByIdService = async (contactId: number): Promise<IContactReturn | null> => {
   const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
@@ -57,37 +64,47 @@ export const getContactByIdService = async (contactId: number): Promise<IContact
   return contactData;
 };
 
-// export const updateContactService = async (
-//   contactId: number,
-//   contactData: Partial<IContactReq>
-// ): Promise<IContactReturn | null> => {
-//   const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
+export const updateContactService = async (
+  contactId: number,
+  contactData: Partial<IContactReq>
+): Promise<IContactReturn | null> => {
+  const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
 
-//   const contact: Contact | null = await contactRepository.findOne(contactId);
+  const contact: Contact | null = await contactRepository.findOne({
+    where: {
+      id: contactId
+    }});
 
-//   if (!contact) {
-//     return null;
-//   }
+  if (!contact) {
+    return null;
+  }
 
-//   await contactRepository.update(contactId, contactData);
+  await contactRepository.update(contactId, contactData);
 
-//   const updatedContact: Contact | null = await contactRepository.findOne(contactId);
+  const updatedContact: Contact | null = await contactRepository.findOne({
+    where: {
+      id: contactId
+    }});
 
-//   const updatedContactData = contactResponseSchema.parse(updatedContact);
+  const updatedContactData = contactResponseSchema.parse(updatedContact);
 
-//   return updatedContactData;
-// };
+  return updatedContactData;
+};
 
-// export const deleteContactService = async (contactId: number): Promise<boolean> => {
-//   const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
+export const deleteContactService = async (contactId: number) => {
+  const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
 
-//   const contact: Contact | null = await contactRepository.findOne(contactId);
+  const contact: Contact | null = await contactRepository.findOne({
+    where: {
+      id: contactId
+    }});
+     
 
-//   if (!contact) {
-//     return false;
-//   }
+  if (!contact) {
+    return false;
+  }
 
-//   await contactRepository.delete(contactId);
+  await contactRepository.delete(contactId);
 
-//   return true;
-// };
+  return true;
+};

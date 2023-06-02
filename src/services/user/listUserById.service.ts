@@ -3,6 +3,7 @@ import { AppDataSource } from "../../data-source";
 import { User } from "../../entities";
 import { AppError } from "../../errors";
 import { IUserReq, IUserReturn } from "../../interfaces/user.interfaces"
+import { plainToInstance } from "class-transformer";
 
 export async function getUserByIdService(userId: string): Promise<IUserReq> {
   
@@ -23,5 +24,5 @@ export async function getUserByIdService(userId: string): Promise<IUserReq> {
     throw new AppError("User not found", 404);
   }
 
-  return user;
+  return plainToInstance(User, user);
 }

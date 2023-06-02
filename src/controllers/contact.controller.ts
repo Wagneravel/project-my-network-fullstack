@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import {
   createContactService,
   getContactByIdService,
+  deleteContactService,
+  updateContactService,
   listContactsService
-//   updateContactService,
-//   deleteContactService,
 } from "../services/contact/contact.service"
 import { IContactReq } from "../interfaces/contact.interface";
 import jwt from "jsonwebtoken";
@@ -19,8 +19,8 @@ export const createContactController = async (req: Request, res: Response) => {
   
     const decodedToken: any = jwt.verify(token, process.env.SECRET_KEY!);
     
-    const userId = decodedToken.id;
-    
+    const userId = decodedToken.user.id;
+    console.log(decodedToken)
     const contactData: IContactReq = req.body;
     const newContact = await createContactService(userId, contactData);
 
@@ -28,12 +28,19 @@ export const createContactController = async (req: Request, res: Response) => {
     
 };
 
+
+
+
+
+
+
+
 export async function allContactsListController(request:Request, response: Response): Promise<Response>{
 
     const allList = await listContactsService()
 
     return response.status(200).json(allList)
-    
+
 }
 
 
@@ -50,31 +57,31 @@ export const getContactByIdController = async (req: Request, res: Response) => {
   return res.status(200).json(contact);
 };
 
-// export const updateContactController = async (req: Request, res: Response) => {
+export const updateContactController = async (req: Request, res: Response) => {
 
-//   const { contactId } = req.params;
-//   const contactData: Partial<IContactReq> = req.body;
+  const { contactId } = req.params;
+  const contactData: Partial<IContactReq> = req.body;
 
-//   const updatedContact = await updateContactService(Number(contactId), contactData);
+  const updatedContact = await updateContactService(Number(contactId), contactData);
 
-//   if (!updatedContact) {
-//     return res.status(404).json({ error: "Contact not found" });
-//   }
+  if (!updatedContact) {
+    return res.status(404).json({ error: "Contact not found" });
+  }
 
-//   return res.status(200).json(updatedContact);
+  return res.status(200).json(updatedContact);
   
-// };
+};
 
-// export const deleteContactController = async (req: Request, res: Response) => {
+export const deleteContactController = async (req: Request, res: Response) => {
 
-//   const { contactId } = req.params;
+  const contactId = req.params.contactId;
 
-//   const deleted = await deleteContactService(Number(contactId));
+  const deleted = await deleteContactService(Number(contactId));
 
-//   if (!deleted) {
-//     return res.status(404).json({ error: "Contact not found" });
-//   }
+  if (!deleted) {
+    return res.status(404).json({ error: "Contact not found" });
+  }
 
-//   return res.status(200).json({ message: "Contact deleted successfully" });
+  return res.status(200).json({ message: "Contact deleted successfully" });
  
-// };
+};

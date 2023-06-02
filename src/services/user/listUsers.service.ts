@@ -4,6 +4,7 @@ import { User } from "../../entities";
 import { AppError } from "../../errors";
 import { IUsersReturn } from "../../interfaces/user.interfaces";
 import { returnMultipleUsersSchema } from "../../schemas/users.schema";
+import { plainToInstance } from "class-transformer";
 
 export const listUsersService = async (): Promise<IUsersReturn> => {
 
@@ -11,6 +12,6 @@ export const listUsersService = async (): Promise<IUsersReturn> => {
   const users: User[] = await userRepository.find();
 
   
-  return returnMultipleUsersSchema.parse(users)
+  return plainToInstance(User,returnMultipleUsersSchema.parse(users)) 
 }
 

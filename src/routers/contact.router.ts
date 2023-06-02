@@ -14,8 +14,8 @@ const contactRouter = express.Router();
 
 contactRouter.post('', verifyTokenIsValidMiddleware, ensureDataIsValidMiddleware(contactReqSchema), createContactController);
 contactRouter.get('/:id', verifyTokenIsValidMiddleware, verifyIfIdUserExistsMiddleware, getContactByIdController  ) 
-contactRouter.get('/:id', verifyTokenIsValidMiddleware, verifyIfIdUserExistsMiddleware, getContactByIdController  ) 
-
+contactRouter.get('', verifyTokenIsValidMiddleware, verifyIfIdUserExistsMiddleware, getContactByIdController  ) 
+contactRouter.delete('/:contactId', verifyTokenIsValidMiddleware, verifyIfIdUserExistsMiddleware, getContactByIdController  ) 
 
 export default contactRouter;
 
