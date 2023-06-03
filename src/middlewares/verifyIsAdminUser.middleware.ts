@@ -15,7 +15,7 @@ async function verifyIsAdminUserMiddleware(req:Request, response:Response, next:
         id: Number(userId)
         },
     });
-    console.log(userS?.admin)
+    // console.log(userId)
 
 
     if(userS?.admin === false){

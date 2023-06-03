@@ -4,7 +4,7 @@ import { Contact, User } from "../../entities";
 import { IContactReq, IContactReturn, IMultipleContactsReturn } from "../../interfaces/contact.interface";
 import { contactResponseSchema, returnMultipleContactsSchema } from "../../schemas/contact.schema";
 import { AppError } from "../../errors";
-
+import { plainToInstance } from "class-transformer";
 
 export const createContactService = async (userId: number, contactData: IContactReq): Promise<IContactReturn> => {
 
@@ -51,18 +51,50 @@ export const getContactByIdService = async (contactId: number): Promise<IContact
 
   const contact: Contact | null = await contactRepository.findOne({
     where: {
-        id: contactId,
-    }    
+        id: Number(contactId),
+    },
+    relations: {
+      user: {
+        contacts: true
+      }
+    } 
   });
 
   if (!contact) {
     return null;
   }
 
-  const contactData = contactResponseSchema.parse(contact);
+  const ccc = contact.user
 
-  return contactData;
+  return plainToInstance(User,contact);
 };
+
+
+
+
+
+export const deleteContactService = async (contactId: number) => {
+  const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
+
+  const contact: Contact | null = await contactRepository.findOne({
+    where: {
+      id: Number(contactId)
+    }});
+     
+
+  if (!contact) {
+    return false;
+  }
+
+  await contactRepository.delete(contactId);
+
+  return true;
+};
+
+
+
+
+
 
 export const updateContactService = async (
   contactId: number,
@@ -91,20 +123,3 @@ export const updateContactService = async (
   return updatedContactData;
 };
 
-export const deleteContactService = async (contactId: number) => {
-  const contactRepository: Repository<Contact> = AppDataSource.getRepository(Contact);
-
-  const contact: Contact | null = await contactRepository.findOne({
-    where: {
-      id: contactId
-    }});
-     
-
-  if (!contact) {
-    return false;
-  }
-
-  await contactRepository.delete(contactId);
-
-  return true;
-};

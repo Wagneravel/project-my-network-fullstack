@@ -17,3 +17,7 @@ export const returnContactSchema = contactReqSchema.extend({
 export const contactResponseSchema = returnContactSchema;
 
 export const returnMultipleContactsSchema = contactResponseSchema.array();
+
+export const contactUpdateSchema = contactReqSchema
+  .pick({ fullName: true, email: true, phone: true })
+  .partial();

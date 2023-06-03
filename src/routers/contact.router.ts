@@ -1,23 +1,32 @@
 import express from 'express';
 import {
   createContactController,
-  getContactByIdController
+  getContactByIdController,
+  allContactsListController,
+  deleteContactController,
+  updateContactController
 } from '../controllers/contact.controller';
 
 import { ensureDataIsValidMiddleware } from "../middlewares/ensureDataIsValid.middleware";
-import { verifyIfIdUserExistsMiddleware } from "../middlewares/verifyIdUserExists.middleware";
+import { verifyIfIdContactExistsMiddleware } from "../middlewares/verifyIdContactExists.middleware";
 import verifyIsAdminOrSameUserMiddleware from "../middlewares/verifyIsAdminOrSameUser.middleware";
 import verifyTokenIsValidMiddleware from "../middlewares/verifyTokenIsValid.middleware";
-import { contactReqSchema } from "../schemas/contact.schema";
+import verifyIsAdminUserMiddleware from "../middlewares/verifyIsAdminUser.middleware";
+import verifyIsAdminOrSameUserByContactMiddleware from "../middlewares/verifyIsAdminOrSameUserByContact.middleware";
+import { contactReqSchema, contactUpdateSchema } from "../schemas/contact.schema";
+
+
 
 const contactRouter = express.Router();
 
 contactRouter.post('', verifyTokenIsValidMiddleware, ensureDataIsValidMiddleware(contactReqSchema), createContactController);
-contactRouter.get('/:id', verifyTokenIsValidMiddleware, verifyIfIdUserExistsMiddleware, getContactByIdController  ) 
-contactRouter.get('', verifyTokenIsValidMiddleware, verifyIfIdUserExistsMiddleware, getContactByIdController  ) 
-contactRouter.delete('/:contactId', verifyTokenIsValidMiddleware, verifyIfIdUserExistsMiddleware, getContactByIdController  ) 
+contactRouter.get('/:id', verifyTokenIsValidMiddleware, verifyIfIdContactExistsMiddleware, verifyIsAdminOrSameUserByContactMiddleware, getContactByIdController  ) 
+contactRouter.get('', verifyTokenIsValidMiddleware, verifyIsAdminUserMiddleware, allContactsListController  ) 
+contactRouter.delete('/:id', verifyTokenIsValidMiddleware, verifyIfIdContactExistsMiddleware, verifyIsAdminOrSameUserByContactMiddleware, deleteContactController  ) 
+contactRouter.patch('/:id', verifyTokenIsValidMiddleware, verifyIfIdContactExistsMiddleware, verifyIsAdminOrSameUserByContactMiddleware, ensureDataIsValidMiddleware(contactUpdateSchema),  updateContactController)
 
 export default contactRouter;
+
 
 
 
