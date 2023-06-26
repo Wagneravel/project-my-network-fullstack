@@ -7,6 +7,16 @@ import { User } from "../../entities";
 import { AppError } from "../../errors";
 import { iLogin, iReturnToken} from "../../interfaces/login.interface";
 
+interface iContactUs{
+  email: string;
+  id: number;
+  fullName: string;
+  phone: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
 interface ILoginResponse {
   token: string;
   user: {
@@ -18,6 +28,7 @@ interface ILoginResponse {
     createdAt: string;
     updatedAt: string;
     deletedAt: string | null;
+    contacts: iContactUs[] 
   };
 }
 
@@ -27,7 +38,16 @@ export async function createLoginService(loginData: iLogin): Promise<ILoginRespo
   
   const userRepository: Repository<User> = AppDataSource.getRepository(User)  
 
-  const user = await userRepository.findOne({ where: { email: loginData.email } });
+  const user = await userRepository.findOne({ 
+    
+    where: { 
+      email: loginData.email 
+    }, 
+    relations: {
+      contacts:{
+        
+      }
+    } });
 
   if (!user) {
     throw new AppError("Invalid credentials", 401);
@@ -56,6 +76,7 @@ export async function createLoginService(loginData: iLogin): Promise<ILoginRespo
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       deletedAt: user.deletedAt,
+      contacts: user.contacts 
     },
   };
 

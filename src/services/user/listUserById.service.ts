@@ -15,7 +15,7 @@ export async function getUserByIdService(userId: string): Promise<IUserReq> {
     },
     relations: {
       contacts: {
-        user: true
+        // user: true
       }
     }
   });
